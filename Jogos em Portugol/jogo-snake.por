@@ -8,10 +8,14 @@ programa
 	const inteiro ALTURA_JANELA = 600
 
 	inteiro pontuacao = 0
+	inteiro record = 0
 	inteiro xcabeca_cobra = 275
 	inteiro ycabeca_cobra = 275
 	inteiro delay1 = 60
 	inteiro delay2 = 60
+
+	inteiro xcauda_cobra[600]
+	inteiro ycauda_cobra[600]
 
 	inteiro xposicoes_comida[24] =
 	{0,25,50,75,100,125,150,175,200,225,250,275,300,
@@ -22,6 +26,7 @@ programa
 
 	inteiro xcomida = 300
 	inteiro ycomida = 300
+	inteiro tamanho_cobra = 2
 	
 	logico direita = falso
 	logico esquerda = falso
@@ -35,10 +40,12 @@ programa
 			pintar_janela()
 			desenhar_painel()
 			direcionar_cobra()
+			atualizar_posicoes_cobra()
 			mover_cobra()
 			reiniciar()
 			desenhar_comida()
 			desenhar_cabeca_cobra()
+			desenhar_cauda_cobra()
 			g.renderizar()
 			u.aguarde(delay1)
 			direcionar_cobra()
@@ -65,6 +72,7 @@ programa
 		g.definir_cor(g.COR_AMARELO)
 		g.definir_tamanho_texto(25.0)
 		g.desenhar_texto( 10, 10, "Pontuação atual: " + pontuacao)
+		g.desenhar_texto(400, 10, "Record: " + record)
 	}
 	funcao desenhar_cabeca_cobra(){
 		g.definir_cor(g.COR_PRETO)
@@ -112,7 +120,6 @@ programa
 	}
 	funcao logico cobra_bateu_parede(){
 		se(xcabeca_cobra > 575 ou xcabeca_cobra < 0 ou ycabeca_cobra > 575 ou ycabeca_cobra < 50){
-			pontuacao = 0
 			retorne verdadeiro
 		}
 		/*senao se(ycabeca_cobra > 575 ou ycabeca_cobra < 50){
@@ -130,11 +137,15 @@ programa
 			esquerda = falso
 			acima = falso
 			abaixo = falso
+			pontuacao = 0
 		}
 	}
 	funcao logico cobra_comeu_comida(){
 		se(xcabeca_cobra == xcomida e ycabeca_cobra == ycomida){
 			pontuacao += 1
+			se(record < pontuacao){
+				record = pontuacao
+			}
 			retorne verdadeiro
 		}senao{
 			retorne falso
@@ -152,6 +163,23 @@ programa
 		g.definir_cor(g.COR_VERMELHO)
 		g.desenhar_retangulo(xcomida, ycomida, 25, 25, falso, verdadeiro)
 	}
+	funcao atualizar_posicoes_cobra(){
+		xcauda_cobra[0] = xcabeca_cobra
+		ycauda_cobra[0] = ycabeca_cobra
+		para(inteiro i = 599; i > 0; i--){
+			xcauda_cobra[i] = xcauda_cobra[i-1]
+			ycauda_cobra[i] = ycauda_cobra[i-1]
+		}		
+	}
+	funcao desenhar_cauda_cobra(){
+		se(cobra_comeu_comida()){
+			tamanho_cobra++
+		}
+		para(inteiro i = 0; i < tamanho_cobra; i++){
+			g.definir_cor(g.COR_VERDE)
+			g.desenhar_retangulo(xcauda_cobra[i], ycauda_cobra[i], 25, 25, falso, verdadeiro)
+		}
+	}
 }
 
 /* $$$ Portugol Studio $$$ 
@@ -159,9 +187,9 @@ programa
  * Esta seção do arquivo guarda informações do Portugol Studio.
  * Você pode apagá-la se estiver utilizando outro editor.
  * 
- * @POSICAO-CURSOR = 2598; 
+ * @POSICAO-CURSOR = 705; 
  * @PONTOS-DE-PARADA = ;
- * @SIMBOLOS-INSPECIONADOS = ;
+ * @SIMBOLOS-INSPECIONADOS = {xcabeca_cobra, 12, 9, 13}-{xcauda_cobra, 17, 9, 12}-{ycauda_cobra, 18, 9, 12};
  * @FILTRO-ARVORE-TIPOS-DE-DADO = inteiro, real, logico, cadeia, caracter, vazio;
  * @FILTRO-ARVORE-TIPOS-DE-SIMBOLO = variavel, vetor, matriz, funcao;
  */
